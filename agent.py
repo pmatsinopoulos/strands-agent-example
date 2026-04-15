@@ -2,6 +2,7 @@ import json
 import logging
 from strands import Agent, tool
 from strands.agent import AgentResult
+from strands.models import BedrockModel
 from strands_tools import calculator, current_time
 
 # Enables Strands debug log level
@@ -39,20 +40,32 @@ def letter_counter(word: str, letter: str) -> int:
 #
 # This Agent uses AWS Amazon Bedrock runtime by default. Also, it selects an
 # Anthropic model by default. The documentation says it selects a Claude 4 model.
+
+model_id = "apac.anthropic.claude-sonnet-4-20250514-v1:0"
+region_name = "ap-southeast-2"
+temperature = 0.5
+
+model = BedrockModel(
+    model_id=model_id,
+    region_name=region_name,
+    temperature=temperature,
+)
 agent = Agent(
+    model=model,
     tools=[calculator, current_time, letter_counter],
     callback_handler=None,
 )
 
 # Ask the agent a question that uses the available tools
-message = """
+prompt = """
 I have 4 requests:
 
 1. What is the time right now?
 2. Calculate 3111696 / 74088
 3. Tell me how many letter R's are in the word "strawberry"
 """
-result: AgentResult = agent(message)
+
+result: AgentResult = agent(prompt=prompt)
 
 print(json.dumps(result.metrics.get_summary(), indent=2, default=str))
 

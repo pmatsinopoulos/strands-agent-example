@@ -30,6 +30,7 @@ def letter_counter(word: str, letter: str) -> int:
 # Anthropic model by default. The documentation says it selects a Claude 4 model.
 agent = Agent(
     tools=[calculator, current_time, letter_counter],
+    callback_handler=None,
 )
 
 # Ask the agent a question that uses the available tools

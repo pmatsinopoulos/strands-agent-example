@@ -1,6 +1,7 @@
 import json
 import logging
 from strands import Agent, tool
+from strands.agent import AgentResult
 from strands_tools import calculator, current_time
 
 # Enables Strands debug log level
@@ -51,6 +52,8 @@ I have 4 requests:
 2. Calculate 3111696 / 74088
 3. Tell me how many letter R's are in the word "strawberry"
 """
-result = agent(message)
+result: AgentResult = agent(message)
 
 print(json.dumps(result.metrics.get_summary(), indent=2, default=str))
+
+print(f"Model used by agent: {agent.model.config}")

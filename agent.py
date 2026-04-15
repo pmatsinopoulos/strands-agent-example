@@ -1,3 +1,4 @@
+import json
 from strands import Agent, tool
 from strands_tools import calculator, current_time
 
@@ -39,4 +40,6 @@ I have 4 requests:
 2. Calculate 3111696 / 74088
 3. Tell me how many letter R's are in the word "strawberry"
 """
-agent(message)
+result = agent(message)
+
+print(json.dumps(result.metrics.get_summary(), indent=2, default=str))

@@ -1,6 +1,16 @@
 import json
+import logging
 from strands import Agent, tool
 from strands_tools import calculator, current_time
+
+# Enables Strands debug log level
+logging.getLogger("strands").setLevel(logging.DEBUG)
+
+# Set the logging format and streams logs to stderr
+logging.basicConfig(
+    format="%(levelname)s | %(name)s | %(message)s",
+    handlers=[logging.StreamHandler()]
+)
 
 # Define a custom tool as a Python function using the @tool decorator
 @tool

@@ -69,4 +69,4 @@ result: AgentResult = agent(prompt=prompt)
 
 print(json.dumps(result.metrics.get_summary(), indent=2, default=str))
 
-print(f"Model used by agent: {agent.model.config}")
+print(f"Model used by agent: {agent.model.get_config()}")

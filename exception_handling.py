@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Any
 from pydantic import ValidationError
 from strands import Agent, tool
@@ -7,7 +8,7 @@ import json
 import logging
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(levelname)s | %(name)s | %(message)s",
     handlers=[logging.StreamHandler()],
 )
@@ -34,6 +35,8 @@ class PropagateUnexpectedExceptions(HookProvider):
         registry.add_callback(event_type=AfterToolCallEvent, callback=self._check_exception)
 
     def _check_exception(self, event: AfterToolCallEvent) -> None:
+        event_dict = {f.name: getattr(event, f.name) for f in dataclasses.fields(event)}
+        logger.debug(f"[check exception] ****************************** Event:\n{json.dumps(event_dict, indent=2, default=str)}")
         if event.exception is None:
             logger.debug(f"[check exception] Tool call succeeded: {event.tool_use['name']}")
             return # Tool succeeded

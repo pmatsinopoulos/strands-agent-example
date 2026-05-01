@@ -37,7 +37,7 @@ class PropagateUnexpectedExceptions(HookProvider):
         if event.exception is None:
             logger.debug(f"[check exception] Tool call succeeded: {event.tool_use['name']}")
             return # Tool succeeded
-        if  isinstance(event.exception, self.expected_exceptions):
+        if isinstance(event.exception, self.expected_exceptions):
             logger.debug(f"[check exception] Allowed exception: {event.exception}")
             return # Let model retry these
         logger.error(f"[check exception] Unexpected exception: {event.exception}")

@@ -1,3 +1,4 @@
+from typing import Any
 from pydantic import ValidationError
 from strands import Agent, tool
 from strands.hooks import AfterToolCallEvent, HookProvider, HookRegistry
@@ -21,7 +22,7 @@ class PropagateUnexpectedExceptions(HookProvider):
     def __init__(self, allowed_exceptions: tuple[type[Exception],...]=(ValueError,)):
         self.allowed_exceptions = allowed_exceptions
 
-    def register_hooks(self, registry: HookRegistry) -> None:
+    def register_hooks(self, registry: HookRegistry, **kwargs: Any) -> None:
         registry.add_callback(event_type=AfterToolCallEvent, callback=self._check_exception)
 
     def _check_exception(self, event: AfterToolCallEvent) -> None:

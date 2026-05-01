@@ -4,6 +4,14 @@ from strands import Agent, tool
 from strands.hooks import AfterToolCallEvent, HookProvider, HookRegistry
 from strands.models import BedrockModel
 import json
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s | %(name)s | %(message)s",
+    handlers=[logging.StreamHandler()],
+)
+logger = logging.getLogger(__name__)
 
 class InvalidExpressionError(Exception):
     """Raised when an invalid expression is provided to the calculator tool."""
@@ -27,12 +35,12 @@ class PropagateUnexpectedExceptions(HookProvider):
 
     def _check_exception(self, event: AfterToolCallEvent) -> None:
         if event.exception is None:
-            print(f"[check exception] Tool call succeeded: {event.tool_use['name']}")
+            logger.debug(f"[check exception] Tool call succeeded: {event.tool_use['name']}")
             return # Tool succeeded
         if  isinstance(event.exception, self.allowed_exceptions):
-            print(f"[check exception] Allowed exception: {event.exception}")
+            logger.debug(f"[check exception] Allowed exception: {event.exception}")
             return # Let model retry these
-        print(f"[check exception] Unexpected exception: {event.exception}")
+        logger.error(f"[check exception] Unexpected exception: {event.exception}")
         raise event.exception # Propagate unexpected errors
 
 model = BedrockModel(

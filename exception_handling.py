@@ -27,8 +27,8 @@ def calculator(expression: str) -> str:
 class PropagateUnexpectedExceptions(HookProvider):
     """Re-raise unexpected exceptions instead of returning them to the model."""
 
-    def __init__(self, allowed_exceptions: tuple[type[Exception],...]=(ValueError,)):
-        self.allowed_exceptions = allowed_exceptions
+    def __init__(self, expected_exceptions: tuple[type[Exception],...]=(ValueError,)):
+        self.expected_exceptions = expected_exceptions
 
     def register_hooks(self, registry: HookRegistry, **kwargs: Any) -> None:
         registry.add_callback(event_type=AfterToolCallEvent, callback=self._check_exception)
@@ -37,7 +37,7 @@ class PropagateUnexpectedExceptions(HookProvider):
         if event.exception is None:
             logger.debug(f"[check exception] Tool call succeeded: {event.tool_use['name']}")
             return # Tool succeeded
-        if  isinstance(event.exception, self.allowed_exceptions):
+        if  isinstance(event.exception, self.expected_exceptions):
             logger.debug(f"[check exception] Allowed exception: {event.exception}")
             return # Let model retry these
         logger.error(f"[check exception] Unexpected exception: {event.exception}")
@@ -54,7 +54,7 @@ agent = Agent(
     model=model,
     tools=[calculator],
     hooks=[PropagateUnexpectedExceptions(
-        allowed_exceptions=(ValueError, ValidationError)
+        expected_exceptions=(ValueError, ValidationError)
     )],
     system_prompt="You are a concise, helpful assistant. Answer in one sentence."
 )
